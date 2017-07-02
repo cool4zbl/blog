@@ -1,0 +1,3 @@
+User-agent: *
+Sitemap: http://zhangbinliu.me/sitemap.xml
+Disallow: /ghost/
