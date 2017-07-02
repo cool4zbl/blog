@@ -1,6 +1,6 @@
 ---
 title: [译]前端指南
-published_at: 14 Mar 15 @ 23:51,
+published_at: 14 Mar 15 @ 23:51
 tags: translate, frontend
 ---
 
