@@ -44,8 +44,10 @@ tags: learning
   CSS Tricks 的创始人和维护者。介绍很多很棒的你肯定会用到的前端技巧。（其实他的个人网站[在这](http://chriscoyier.net/)）
 - [Kenneth Reitz](kennethreitz.org)
   Python Request 库维护者。唔，喜欢拿徕卡拍照且减肥成功的人生赢家。
+- [Feross Aboukhadijeh](https://feross.org/)
+  WebTorrent 作者之一。JS Standard Style 作者。斯坦福毕业的一小哥，兴趣爱好广泛。
 
-####Chinese:
+#### Chinese:
 - [Jerry Qu](https://imququ.com/)
   360 的屈屈，高产技术博客作者。
 - [罗磊](https://luolei.org/)
