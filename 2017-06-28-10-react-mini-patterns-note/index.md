@@ -4,9 +4,6 @@ tags: notes, frontend
 
 ---
 
-# Notes of 10 React mini-patterns and Project Creator
-
-
 很早之前就一直在读的一篇文章，[10 个React Mini 设计模式](https://hackernoon.com/10-react-mini-patterns-c1da92f068c5)，
 一边做 `Creator` 项目，也一边终于把它精读完。
 结合自己的开发时候的项目经验，做了点笔记。
@@ -658,8 +655,7 @@ fetch(`/api/search?${queryParams}`)
 });
 ```
 
-**这里推荐徐飞在 QCon 上分享的 [单页引用的数据流方案探索](https://zhuanlan.zhihu.com/p/26426054)
-
+**这里推荐徐飞在 QCon 上分享的 [单页引用的数据流方案探索](https://zhuanlan.zhihu.com/p/26426054)**
 
 
 
