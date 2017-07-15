@@ -46,6 +46,9 @@ tags: learning
   Python Request 库维护者。唔，喜欢拿徕卡拍照且减肥成功的人生赢家。
 - [Feross Aboukhadijeh](https://feross.org/)
   WebTorrent 作者之一。JS Standard Style 作者。斯坦福毕业的一小哥，兴趣爱好广泛。
+- [Mathieu 'p01' Henri](http://www.p01.org/)
+  代码艺术家，JS1K 的积极参与和获奖者。A very COOL guy.
+  > Creative coder, technical speaker, demoscener, JavaScript developer and size optimizer extraordinary.
 
 #### Chinese:
 - [Jerry Qu](https://imququ.com/)
