@@ -13,7 +13,7 @@ tags: SEO, shares
 
 
 
-# 1. SEO：Search Engine Optimazition
+### 1. SEO：Search Engine Optimazition
 
 产品：搜索引擎优化，促进内容网站信息分享／传播，提高目标转化率，留存率
 
@@ -28,7 +28,7 @@ tags: SEO, shares
 
 
 
-# 2. 前端在 SEO 中的位置
+### 2. 前端在 SEO 中的位置
 
 - **帮助产品进行TDK （Title / Description / Keyword）优化**
 - **添加一些 Social Meta Tag （Facebook / Twitter / G+ / WeChat / Weibo）**
@@ -43,7 +43,7 @@ tags: SEO, shares
 
 
 
-# 3. 具体实现
+### 3. 具体实现
 
 > **统一 SNS 抓取**
 >
@@ -75,9 +75,9 @@ tags: SEO, shares
 
 
 
-# 实现方案
+### 实现方案
 
-## 1. 增加了 `seo_meta()` Mako widget
+#### 1. 增加了 `seo_meta()` Mako widget
 
  http://github.intra.douban.com/frodo/Talion/blob/master/templates/card/widgets.html#L527
 
@@ -150,7 +150,7 @@ tags: SEO, shares
 
 
 
-## 2. 给 m 站大部分页面增加了 SEO Meta Tags
+#### 2. 给 m 站大部分页面增加了 SEO Meta Tags
 
 之前分享出去抓不到自定义的 description 和 image ，现默认分享到 weixin 的 title 、 description 、image 值都和 Open Graph 一样，也可以自定义。
 
@@ -203,7 +203,7 @@ http://p.dapps.douban.com/p/78b40c471bab42209a0cb8ee2283c974.blob
 
 
 
-## 3. 统一分享接口（微信重度使用患者）
+#### 3. 统一分享接口（微信重度使用患者）
 
 - [weixin.js](http://github.intra.douban.com/frodo/Talion/blob/master/static/js/card/weixin.js#L52)、 [微信 JSSDK 文档](https://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E5.88.86.E4.BA.AB.E6.8E.A5.E5.8F.A3)
 
@@ -251,7 +251,7 @@ http://p.dapps.douban.com/p/78b40c471bab42209a0cb8ee2283c974.blob
 ```
 
 
-# 4. Further Reading & Resource
+### Further Reading & Resource
 
 1. Sitemap & [Deadlink](http://baiduseoguide.com/news/20141128113.html)
 2. Social Meta Tag Cheatsheet
