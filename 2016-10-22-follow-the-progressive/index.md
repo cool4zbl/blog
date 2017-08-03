@@ -49,6 +49,8 @@ tags: learning
 - [Mathieu 'p01' Henri](http://www.p01.org/)
   代码艺术家，JS1K 的积极参与和获奖者。A very COOL guy.
   > Creative coder, technical speaker, demoscener, JavaScript developer and size optimizer extraordinary.
+- [muan](http://muan.co/)
+  一个说英文的台湾妹子。很有创意，很好玩。博客很简洁有设计感，喜欢折腾 Emoji.
 
 #### Chinese:
 - [Jerry Qu](https://imququ.com/)
