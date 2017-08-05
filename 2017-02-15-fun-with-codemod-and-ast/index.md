@@ -134,7 +134,7 @@ https://github.intra.douban.com/accounts/accounts/pull/553/files#diff-b2286efdea
 
 这么说其实还是有点抽象，我们先打开 [wiki](https://en.wikipedia.org/wiki/Abstract_syntax_tree) 看到 wikipedia 这个图，
 
-![image](https://media.github.intra.douban.com/user/62/files/9d7500be-f370-11e6-972f-f5ede1c448f8)
+![AST Tree](../content/images/codemod_ast/ast_tree.png)
 
 
 前端er 一定会觉得很相似，这里不就是 DOM 语法树的终极抽象版本吗，只是把一个个 DOM Nodes 换成了一个个更加无语义的字符 Token。
@@ -142,7 +142,7 @@ FB 有一个很棒的工具 [ASTExplorer](http://astexplorer.net/)，可以用�
 
 比如说，我们现在就只有一个很简单的表达式`a+b`，这里是 recast Parser 解析后的 AST 结构：
 
-![image](https://media.github.intra.douban.com/user/62/files/758a6076-f370-11e6-97e4-f6152c3814bf)
+![a + b AST Tree](../content/images/codemod_ast/a+b_ast_tree.png)
 
 看上去特别复杂。注意那些蓝色字体 `File`, `Programme`,` ExpressionStatement`,` Identifier`… 这些都是 AST Nodes，其他的都是和这个 Node 相关的数据。
 
@@ -154,7 +154,7 @@ FB 有一个很棒的工具 [ASTExplorer](http://astexplorer.net/)，可以用�
 
 虽然有很多 Parser，但是基本上，一个 parser 的结构都差不多，对源代码进行词法分析，生成 Tokens，对 Tokens 进行语法分析，然后生成 AST。
 
-![image](https://media.github.intra.douban.com/user/62/files/5751ac04-f370-11e6-849e-692ab4b47bbf)
+![Parser](../content/images/codemod_ast/parser.png)
 
 具体可以参考看下 [Esprima Parse Demo](http://esprima.org/demo/parse.html#)。
 生成的 AST 都遵循一个统一标准 [ESTree](https://github.com/estree/estree/blob/master/es5.md) or [Mozilla SpiderMonkey](parser API https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API)，也就是说都会返回一个 ESTree Compatible AST。
@@ -204,7 +204,7 @@ https://github.intra.douban.com/zhangbinliu/ast_demo/tree/esprima
 据 jscodeshift 创造者之一 CPojer 说，根据转换后的 AST，以及一些输出 [Options](https://github.com/benjamn/recast/blob/52a7ec3eaaa37e78436841ed8afc948033a86252/lib/options.js#L61)（比如是否单引号、tab 宽度是多少、需不需要去掉尾部分号…），是一个挺困难的过程。
 但是最终，jscodeshift 的输出 API 却简洁明了，只要一行代码即可搞定。
 
-```
+```javascript
 .toSource({quote: 'single'}); // sets strings to use single quotes in transformed code.
 ```
 
@@ -226,18 +226,18 @@ jscodeshift -t <transform.js> /to/file/path
 
 #### Problem:
 
-```
+```javascript
 // Before
-'Hello, ' + name + ', this is a string.'
+'Hello, ' + name + ', I am a string.'
 // After
-`Hello, ${name}, this is a string.`
+`Hello, ${name}, I am a string.`
 ```
 
 #### Solution:
 
 1. Simplify， 考虑一个最简单的情况
 
-```
+```javascript
 // Before
 a + b
 // After
@@ -246,11 +246,11 @@ a + b
 
 `a + b` AST:
 
-![image](https://media.github.intra.douban.com/user/62/files/e4d3c126-f36f-11e6-98aa-382c3afd9bcf)
+![`a + b` AST](../content/images/codemod_ast/a+b_ast_tree.png)
 
 `${a}${b}` AST:
 
-![image](https://media.github.intra.douban.com/user/62/files/ea450a52-f36f-11e6-9a28-f715785d13a2)
+![`${a}${b}`](../content/images/codemod_ast/a+b_tmpl_ast.png)
 
 对比两个 AST 可以发现，我们只需要
 
@@ -365,7 +365,7 @@ export default function transformer(file, api) {
 
 ## 总结 & 开脑洞
 - 总结下基本处理流程：
-  ![image](https://media.github.intra.douban.com/user/62/files/7fe54aa4-f370-11e6-90d8-9f191a40a5cc)
+  ![Process](../content/images/codemod_ast/process.png)
 
 - AST 是很有用的一个抽象概念。一旦你理解了这些规则，唯一的限制就是解析器和你的想象力。
 - 纯 AST parse 太过于理论，既然是工程师，还是需要自己动手写点什么来解决自己实际遇到的问题。
