@@ -1,6 +1,6 @@
 ---
 title: 从十个 React 迷你设计模式谈开去
-tags: notes, frontend
+tags: notes, frontend, tech
 
 ---
 
@@ -184,7 +184,7 @@ Three distinct ways to control the CSS applied to a component.
 
    ![creating-a-link-component](https://cdn-images-1.medium.com/max/800/1*Kx1jOQONhFZPnGe72Fd4tQ.png)
 
-   ```jsx
+   ```javascript
    // Link.js
    const Link = (props) => {
      let className = `link link--${props.theme}-theme`;
@@ -435,7 +435,7 @@ myAppInstance.doSth() // The ref returned from ReactDOM.render
 
 ### ref
 
-一个神奇的属性。
+一个神奇的属性, 但是很有用。感觉都可以独立写篇文章来好好介绍了。
 
 #### The ref Callback Attribute
 

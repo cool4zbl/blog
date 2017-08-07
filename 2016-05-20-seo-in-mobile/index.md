@@ -1,7 +1,7 @@
 ---
 title: 移动环境下的 SEO
 published_at: 20 May 16 @ 02:21
-tags: SEO, shares
+tags: SEO, shares, tech
 ---
 
 真的有很久很久没来理这个博客，距离上一篇文章的发布日期是两年前。
@@ -10,7 +10,6 @@ tags: SEO, shares
 以下，Enjoy。
 
 ---
-
 
 
 ### 1. SEO：Search Engine Optimazition
@@ -27,7 +26,6 @@ tags: SEO, shares
 
 
 
-
 ### 2. 前端在 SEO 中的位置
 
 - **帮助产品进行TDK （Title / Description / Keyword）优化**
@@ -39,7 +37,6 @@ tags: SEO, shares
   - 比如 ` m.douban.com/group/topics[?start=xxx]`均视为同一个页面这里的 `?start=xxx`是一个分页查询参数，所以为了确保这些页面都能继承 m.douban.group/toics 这个 url  的权重，在`head`中增加了`canonical`标签
 - Meta robots
 - Sitemap
-
 
 
 
@@ -195,12 +192,6 @@ tags: SEO, shares
 
 http://github.intra.douban.com/frodo/Talion/pull/253
 
-（补图）
-
-(http://p.dapps.douban.com/p/38c24dc31b4d482c8095083995e43d00.blob)
-
-http://p.dapps.douban.com/p/78b40c471bab42209a0cb8ee2283c974.blob
-
 
 
 #### 3. 统一分享接口（微信重度使用患者）
@@ -209,36 +200,34 @@ http://p.dapps.douban.com/p/78b40c471bab42209a0cb8ee2283c974.blob
 
 ```javascript
 
-          wx.onMenuShareTimeline($.extend({}, shareData,{
-              title: window.getMeta('weixin:timeline_title') || document.title,
-              success: function () {
-                  wxShareStat.target = 'timeline';
-                  $.get('/j/wechat/shared', wxShareStat);
-              },
-              cancel: function () {}
-          }));
+wx.onMenuShareTimeline($.extend({}, shareData,{
+    title: window.getMeta('weixin:timeline_title') || document.title,
+    success: function () {
+        wxShareStat.target = 'timeline';
+        $.get('/j/wechat/shared', wxShareStat);
+    },
+    cancel: function () {}
+}));
 
-          wx.onMenuShareAppMessage($.extend({}, shareData,{
-              title: window.getMeta('weixin:chat_title') || document.title,
-              desc: window.getMeta('weixin:description') || window.getMeta('og:description'),
-              success: function () {
-                  wxShareStat.target = 'friend';
-                  $.get('/j/wechat/shared', wxShareStat);
-              },
-              cancel: function () {}
-          }));
+wx.onMenuShareAppMessage($.extend({}, shareData,{
+    title: window.getMeta('weixin:chat_title') || document.title,
+    desc: window.getMeta('weixin:description') || window.getMeta('og:description'),
+    success: function () {
+        wxShareStat.target = 'friend';
+        $.get('/j/wechat/shared', wxShareStat);
+    },
+    cancel: function () {}
+}));
 ```
 
   结合使用 `meta[name="weixin:image"]`
 
+```html
+<meta property="weixin:timeline_title" content="${ wechat_timeline_title or '' }" />
+<meta property="weixin:chat_title" content="${ wechat_chat_title or '' }" />
+<meta property="weixin:description" content="${ wechat_desc or '' }" />
+<meta property="weixin:image" content="${ image or default_image }" />
 ```
-      <meta property="weixin:timeline_title" content="${ wechat_timeline_title or '' }" />
-      <meta property="weixin:chat_title" content="${ wechat_chat_title or '' }" />
-      <meta property="weixin:description" content="${ wechat_desc or '' }" />
-      <meta property="weixin:image" content="${ image or default_image }" />
-```
-
-  ​
 
 -  自定义微信分享到聊天、朋友圈的显示内容，文案`setMeta()`, `getMeta()`
 
@@ -247,8 +236,14 @@ http://p.dapps.douban.com/p/78b40c471bab42209a0cb8ee2283c974.blob
 -  **Bugs:** 通过 Safari Extension 分享出来的永远抓的是 `apple-touch-icon` 😂
 
 ```html
-  <link rel="apple-touch-icon-precomposed" href="https://img3.doubanio.com/f/talion/315ba4fc82e5cdb5c50ef1d9f88c8aa2c5c0c4ba/pics/icon/m_logo_76.png">
+<link rel="apple-touch-icon-precomposed" href="https://img3.doubanio.com/f/talion/315ba4fc82e5cdb5c50ef1d9f88c8aa2c5c0c4ba/pics/icon/m_logo_76.png">
 ```
+
+微信分享效果图：
+![after_seo_1]('/content/images/seo_in_mobile/seo_1.png')
+![after_seo_2]('/content/images/seo_in_mobile/seo_2.png')
+![after_seo_3]('/content/images/seo_in_mobile/seo_3.png')
+
 
 
 ### Further Reading & Resource
