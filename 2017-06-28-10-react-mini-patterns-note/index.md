@@ -1,4 +1,4 @@
----
+--
 title: 从十个 React 迷你设计模式谈开去
 tags: notes, frontend, tech
 
@@ -129,7 +129,7 @@ Three distinct ways to control the CSS applied to a component.
 
 1. Using themes. (Used in Proj Creator)
 
-   `<Button theme="secondary">Hello</Button>`
+`<Button theme="secondary">Hello</Button>`
 
    Tip: Do your best to only require one theme per component.
 
@@ -141,13 +141,13 @@ Three distinct ways to control the CSS applied to a component.
 
 2. Using flags. (Used too.)
 
-   `<Button theme="secondary" rounded>Hello</Button>`
+`<Button theme="secondary" rounded>Hello</Button>`
 
    在项目中自己写的一个 `Button` 组件：
 
    ​
 
- ```javascript
+```javascript
  Button.propTypes = {
    size: PropTypes.oneOf([
      'sm',
@@ -169,7 +169,7 @@ Three distinct ways to control the CSS applied to a component.
   [`${prefixCls}-btn-${status}`]: !!status,
   [`${prefixCls}-btn-${type}`]: !!type
  }, props.className)
- ```
+```
 
 
 
