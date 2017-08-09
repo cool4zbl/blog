@@ -1,18 +1,20 @@
---
-title: 从十个 React 迷你设计模式谈开去
-tags: notes, frontend, tech
+---
+
+title: Notes of 10 React mini-patterns and Project Creator
 
 ---
 
-很早之前就一直在读的一篇文章，[10 个React Mini 设计模式](https://hackernoon.com/10-react-mini-patterns-c1da92f068c5)，
 
-一边做 `Creator` 项目，也一边终于把它精读完。
+
+很早之前就一直在读的一篇文章，[10 个React Mini 设计模式](https://hackernoon.com/10-react-mini-patterns-c1da92f068c5)，一边做 `Creator` 项目，也一边终于把它精读完。
 
 结合自己的开发时候的项目经验，做了点笔记。
 
-`Creator` 项目是一个多端（Web + Mobile）React SPA，且有一些表单填写和复杂的交互组件，自己单独封装了一个很简单的基于事件的 `Store`，开发过程中收获很大，这些细节之后可以细说。
+`Creator` 项目是一个多端（Web + Mobile）React SPA，且有一些表单填写和复杂的交互组件。
 
-原文作者说你是不是天天写 React, 写着写着发现自己可能经常用来实现需求的，也总是那么几个方法，往大了讲其实就是开发中的 **设计模式**。这里我们称为 **Mini Patterns**。
+~~自己单独封装了一个很简单的基于 Node `EventEmitter` 的 `Store`，开发过程中收获很大，这些细节之后可以细说。~~ 产品那边后来又加了「置顶」功能，类似双向数据通信的 `EventEmitter` 逻辑有点太乱了，所以还是狠心花时间升级成了 `Redux` + `Immutable.js` + `Normalizr` 技术栈，果然省心很多。
+
+原文作者说你是不是天天写 React, 写着写着发现自己可能经常用来实现需求的，也总是那么几个方法，往大了讲其实就是开发中的 **设计模式**。在这里我们称为 **Mini Patterns**。
 
 
 
@@ -20,9 +22,9 @@ tags: notes, frontend, tech
 
 ![Data-flow](https://cdn-images-1.medium.com/max/2000/1*J5XOQh2WKIl0NFTAMvcVbQ.png)
 
-- React 数据流
-- ParentComponent  通过 `props` 传给 ChildComponent 值
-- ChildComponent 通过 `props` 传过来的一些 function 回调 parent 的一些方法。
+- 这里是父子通信的 React 数据流，ParentComponent  通过 `props` 传给 ChildComponent 值，ChildComponent 通过 `props` 传过来的一些 function 回调 parent 的一些方法。
+- 组件间通信，还可以使用事件发布/订阅模式，及 `this.context` 黑魔法，或者第三方解决方案（Redux / MobX）
+
 
 
 
@@ -36,35 +38,32 @@ tags: notes, frontend, tech
 
 - 如果需要有大量 user inputs，最好是自己实现一套相关组件。
 
-- 所以在 Creator 中基本自己实现了 `input`，`Select` 等组件。需求简单所以实现得也是很简单。所以其实 `Select` 组件仍然需要优化，比如自定义 `option` 样式，多选等等。
+- 所以在 Creator 中基本自己实现了 `input`，`Select` 等组件。需求简单所以实现得也是很简单，其实 `Select` 组件仍然需要优化，比如自定义 `option` 样式，多选等等。
 
-- Inputs should return a value via an `onChange` method, not a JavaScript `Event` instance, shouldn’t they?
-
-- Input 最好通过 `onChange` 返回一个值，而不是通过一个 JS `Event` 实例。
-
-- You can go a step further and ensure that the data type returned in `onChange` matches the type passed in. If the `typeof props.value` is `number`, then convert `e.target.value` back to a number before sending the data out again.
+- Input 最好通过 React 合成事件 `onChange` 返回一个值，而不是通过一个原生 JS `Event` 实例。React  基于 Virtual DOM 实现了一个 `SyntheticEvent` （合成事件）层，我们所定义的事件处理器会收到一个 `SyntheticEvent` 对象的实例，这个实例和原生的浏览器事件拥有一样的接口。而如果要访问原生事件对象的话，需要使用 `nativeEvent` 属性。React 官方建议说这会造成一定的性能问题。
 
 - 在返回 `onChange` 的值之前确保一下是不是和输入的类型匹配。比如 `typeof props.value === 'number'` 的话，在返回 `e.target.value` 前需要确保也是数字类型。
 
-- 这里项目中有个选择证件类型的 `Select`，与后端默认 身份证 = 0 / 护照 = 1，但是在 `e.target.value` 时候忘记 convert 了。所以还是需要记得判断下 `option` 的值类型。
+- 这里项目中有个选择证件类型的 `Select` 组件，与后端默认 身份证 = 0 / 护照 = 1，但是在 `e.target.value` 时候忘记 convert 了。所以还是需要记得判断下 `option` 的值类型。
 
   ```javascript
   let {name, value} = e.target
   value = isNaN(Number(value)) ? value : Number(value)
   ```
 
-- A set of radio buttons is functionally the same thing as a `<select>`, right? It’s messed up to treat them in a completely different manner when the only difference is the UI. Maybe for your app it makes sense to have a single `<PickOneFromMany />` component and pass either `ui="radio"` or `ui="dropDown"`.
+  ​
 
-- 一堆单选按钮在功能上和一个 `<select>` 组件是一样的。没有必要把它们完全不一样地来对待，因为它们仅仅是 UI 不一样。其实可能只需要一个 `<PickOneFromMany />` 组件就好，通过 `ui="radio"` 或者`ui="dropdown"` 来区分。
+- 一堆单选按钮在功能上和一个 `<select>` 组件是一样的。没有必要把它们完全不一样地来对待，因为它们仅仅是 UI 不一样。其实可能只需要一个 `<PickOneFromMany />` 组件就好，通过 `ui="radio"` 或者`ui="dropdown"` 来区分功能。
 
 - **React Form 与 HTML 的不同**
 
-  - `value/checked` 设置后用户输入无效，相当于设置了 value -> controlled component.
+  - `value/checked` 设置后用户输入无效，相当于设置了 value，即变成了受控组件 controlled component.
   - `textarea` 的值要设置在 value 属性
   - `select` 的`value` 属性可以是数组，不建议使用 `option` 的 `selected` 属性
   - `input/textarea` 的 `onChange` 每次输入都会触发，即使不失去焦点
-  - `radio/checkbox`  点击后触发 `onChange
+  - `radio/checkbox`  点击后触发 `onChange`
 
+  ​
 
 
 
@@ -117,19 +116,17 @@ export const getNextId = () => {
 }
 ```
 
-- 这里大概是自动给 `label`/`input` 加上一对一的 id. 可能是为了在表单填写的时候给用户更好的体验吧。
-
-
+- 用户体验相关，自动给表单的 `label`/`input` 加上一对一的 id.
+- `getNextId()` 创建了一个闭包, 这里会返回一个计数器。
 
 
 
 ## #4 Controlling CSS with props
+使用 `props` 进行样式控制的三种方法
 
-Three distinct ways to control the CSS applied to a component.
+1. 使用主题 ( Using themes ). (Used in Proj Creator)
 
-1. Using themes. (Used in Proj Creator)
-
-`<Button theme="secondary">Hello</Button>`
+   `<Button theme="secondary">Hello</Button>`
 
    Tip: Do your best to only require one theme per component.
 
@@ -139,117 +136,115 @@ Three distinct ways to control the CSS applied to a component.
 
    ​
 
-2. Using flags. (Used too.)
+2. 使用标志 (Using flags) (Used in Proj Creator)
 
-`<Button theme="secondary" rounded>Hello</Button>`
+   `<Button theme="secondary" rounded>Hello</Button>`
 
-   在项目中自己写的一个 `Button` 组件：
 
-   ​
-
-```javascript
- Button.propTypes = {
-   size: PropTypes.oneOf([
-     'sm',
-     'md',
-     'lg',
-     'row'
-   ]),
-   status: PropTypes.oneOf(Object.values(BUTTON_STATUS)),
-   type: PropTypes.oneOf([
-     'submit',
-     'save',
-     'cancel'
+ ```javascript
+  // Creator Project:
+   Button.propTypes = {
+     size: PropTypes.oneOf([
+       'sm',
+       'md',
+       'lg',
+       'row'
+     ]),
+     status: PropTypes.oneOf(Object.values(BUTTON_STATUS)),
+     type: PropTypes.oneOf([
+       'submit',
+       'save',
+       'cancel'
      ])
- }
- // use className to control styles
- const cls = classNames('btn', {
-  [`${prefixCls}-btn`]: true,
-  [`${prefixCls}-btn-${size}`]: !!size,
-  [`${prefixCls}-btn-${status}`]: !!status,
-  [`${prefixCls}-btn-${type}`]: !!type
- }, props.className)
-```
+   }
+
+   // Use className to control styles
+  const cls = classNames('btn', {
+    [`${prefixCls}-btn`]: true,
+    [`${prefixCls}-btn-${size}`]: !!size,
+    [`${prefixCls}-btn-${status}`]: !!status,
+    [`${prefixCls}-btn-${type}`]: !!type
+  }, props.className)
+ ```
 
 
 
 3. Setting values.
 
-   Pass the value of a CSS property directly. (set it as an inline style)
+   直接设置 inline CSS 属性值。
 
-`<Icon width="25" height="25" type="search" />`
+   `<Icon width="25" height="25" type="search" />`
 
-**举个栗子**
+
+
+ **举个栗子**
 
    ![creating-a-link-component](https://cdn-images-1.medium.com/max/800/1*Kx1jOQONhFZPnGe72Fd4tQ.png)
 
-```javascript
-// Link.js
-const Link = (props) => {
- let className = `link link--${props.theme}-theme`;
+   ```javascript
+   // Link.js
+   const Link = (props) => {
+     let className = `link link--${props.theme}-theme`;
 
- if (!props.underline) className += ' link--no-underline';
+     if (!props.underline) className += ' link--no-underline';
 
- return <a href={props.href} className={className}>{props.children}</a>;
-};
+     return <a href={props.href} className={className}>{props.children}</a>;
+   };
 
-Link.propTypes = {
- theme: PropTypes.oneOf([
-   'default', // primary color, no underline
-   'blend', // inherit surrounding styles
-   'primary-button', // primary color, solid block
- ]),
- underline: PropTypes.bool,
- href: PropTypes.string.isRequired,
- children: PropTypes.oneOfType([
-   PropTypes.element,
-   PropTypes.array,
-   PropTypes.string,
- ]).isRequired,
-};
+   Link.propTypes = {
+     theme: PropTypes.oneOf([
+       'default', // primary color, no underline
+       'blend', // inherit surrounding styles
+       'primary-button', // primary color, solid block
+     ]),
+     underline: PropTypes.bool,
+     href: PropTypes.string.isRequired,
+     children: PropTypes.oneOfType([
+       PropTypes.element,
+       PropTypes.array,
+       PropTypes.string,
+     ]).isRequired,
+   };
 
-Link.defaultProps = {
- theme: 'default',
- underline: false,
-};
-```
+   Link.defaultProps = {
+     theme: 'default',
+     underline: false,
+   };
+   ```
 
-```scss
-// Link.css
-.link--default-theme,
-.link--blend-theme:hover {
- color: #D84315;
-}
+   ```scss
+   // Link.css
+   .link--default-theme,
+   .link--blend-theme:hover {
+     color: #D84315;
+   }
 
-.link--blend-theme {
- color: inherit;
-}
+   .link--blend-theme {
+     color: inherit;
+   }
 
-.link--default-theme:hover,
-.link--blend-theme:hover {
- text-decoration: underline;
-}
+   .link--default-theme:hover,
+   .link--blend-theme:hover {
+     text-decoration: underline;
+   }
 
-.link--primary-button-theme {
- display: inline-block;
- padding: 12px 25px;
- font-size: 18px;
- background: #D84315;
- color: white;
-}
+   .link--primary-button-theme {
+     display: inline-block;
+     padding: 12px 25px;
+     font-size: 18px;
+     background: #D84315;
+     color: white;
+   }
 
-.link--no-underline {
- text-decoration: none;
-}
-```
+   .link--no-underline {
+     text-decoration: none;
+   }
+   ```
 
-​
 
    > JavaScript is easy, but with CSS you pay for your sins — once you’ve started a mess, it’s not easy to back out of.
    >
    > True fact: fighting CSS specificity is the number one cause of death among web developers.
-
-   嗯，这里原文作者用 CSS specificity 优先级举了个例子。比如他说你现在可以去看看 medium 顶端导航上大 Title 的CSS 样式，
 
    > just guess how many CSS rules are combined to make this round circle with a number in it?
    >
@@ -259,13 +254,14 @@ Link.defaultProps = {
    >
    > The line-height alone is overridden nine times.
 
+   嗯，这里原文作者用 CSS specificity 优先级举了个例子。比如他说你现在可以去看看 medium 顶端导航上大 Title 的CSS 样式，
    光是 `line-height` 特么的就重写了九次！！！
 
    ![line-height-css-rules](https://cdn-images-1.medium.com/max/800/1*lQzlIf8PPqeLUS5VOvTH4Q.png)
 
    ​
 
-   这 line-height 要是一只猫的话，现在也早死了吧。
+   这 `line-height` 要是一只猫的话，现在也早死了吧。
 
    React 的话，就好办了。
 
@@ -275,11 +271,10 @@ Link.defaultProps = {
 
 
 
-
-
 ## #5 The switching component
 
 The switching component, rendering one of many components.
+开关组件，每次只渲染众多组件中的一个。有点类似路由组件。
 
 > This may be a `<Page>` component that displays one of many pages. Or tabs in a tab set, or different modals in a modal component.
 
@@ -315,9 +310,9 @@ If you replace the keys `home`, `about` and `user` with `/`, `/about`, and `/use
 
 (Future post idea: removing `react-router`.)
 
-这里 Creator 中还是使用了 `react-router` 作为 SPA 路由。
+这里 Creator 中还是使用了 `react-router` 作为 SPA 路由。而且用的是 `HashRouter`，这样的话一个个路径都可以由 `location.hash` 无刷新跳转。
 
-个人觉得 `React`+ `react-router` + `webpack` 这样的项目，开发中使用 `HashRouter`，既能使用 `location.hash = xxx` 作组件间无刷新跳转，又能保证打包后路径访问正确（除非你实在看不惯 `/#/`，想把它干掉）。
+个人觉得这是 `react-router` + `webpack` 两者结合来解决打包路径问题的最佳方案。
 
 ```javascript
 // Route.jsx
@@ -391,15 +386,17 @@ const App = () => (
     </div>
   </HashRouter>
 )
+
 ```
 
 
 
 ## #6 Reaching into a component
+深入研究下组件
 
 ### render
 
-React Virtual DOM ==> render= => DOM
+React Virtual DOM ==> render ==> DOM
 
 ```javascript
 ReactComponent render(
@@ -413,41 +410,39 @@ ReactComponent render(
 
 > `ReactDOM.render()` controls the contents of the container node you pass in. Any existing DOM elements inside are replaced when first called. Later calls use React’s DOM diffing algorithm for efficient updates.
 
-- `ReactElement` into DOM.
+- `render()` 即把 `ReactElement` 插入到 DOM.
 - 有状态组件 => `refs`，无状态组件 => `null`
-- 组件初次渲染之后再次更新，会使用 ReactDOM diffing algorithm
-- 装载完后，执行回调 callback
-- `ReactDOM.render()` 不会影响 container node，只会影响 container node 的 children nodes. （可能是被覆盖替换啊..）
+- 组件初次渲染之后再次更新，会使用 ReactDOM Diff algorithm
+- 装载完后，如果有 callback 则执行
+- `ReactDOM.render()` 不会影响 Container Node，只会影响 Container Node 的 Children Nodes. （可能是被覆盖替换啊..）
 
 
 
 ```javascript
-const myApp = <App />   // just a ReactElement.(a object)
+const myApp = <App />   // Just a `ReactElement`(object).
 
 const myAppInstance = ReactDOM.render(<App />, document.getElementById('root'))
 myAppInstance.doSth() // The ref returned from ReactDOM.render
 ```
 
-这里利用 `render` 方法得到了 App 组件的实例，就可以使用它做点什么了。
+这里利用 `render` 方法得到了 App 组件的实例，就可以用它做点什么了。
 
-但是如果在组件内，JSX 并不会返回一个组件的实例。组件内只是一个 ReactElement，告诉 React 加载的组件应该长什么样。
+但是如果在组件内，JSX 并不会返回一个组件的实例。组件内只是一个 `ReactElement`, 轻量级的 DOM，告诉 React 加载的组件应该长什么样。
 
 > Keep in mind, however, that the JSX doesn't return a component instance! It's just a **ReactElement**: a lightweight representation that tells React what the mounted component should look like.
 
-所以出现了：
-
 ### ref
 
-一个神奇的属性， 但是很有用。感觉都可以独立写篇文章来好好介绍了。
+Hmmm, 一个神奇的属性。
 
-#### The ref Callback Attribute
+#### The `ref` Callback Attribute
 
 - 可以给任意 React 组件加上 `ref` prop. 组件被调用时候会新建一个该组件实例，而 `ref` 会指向这个实例。
 
 
-- 可以是一个 callback function，会在组件加载后立即执行。
+- 也可以是一个 inline callback function，会在组件加载后立即执行。
 
-  ```javascript
+```javascript
   // ES5
 
   render: function() {
@@ -468,7 +463,7 @@ myAppInstance.doSth() // The ref returned from ReactDOM.render
   componentDidMount() {
     this._input.focuse()
   }
-  ```
+```
 
   ​
 
@@ -478,10 +473,11 @@ myAppInstance.doSth() // The ref returned from ReactDOM.render
 - `refs` in `DOM`  => 得到 DOM 节点，就可以使用 DOM 方法。
 - *Note:* Note that when the referenced component is unmounted and whenever the ref changes, the old ref will be called with `null` as an argument. This prevents memory leaks in the case that the instance is stored, as in the first example. Also note that when writing refs with inline function expressions as in the examples here, React sees a different function object each time so on every update, ref will be called with `null` immediately before it's called with the component instance.
 - 为防止内存泄露，当引用组件被卸载或者 `ref` 改变的时候，`ref = null`.
-- 如果用 inline function，因为每次都是一个不同的 function object，所以当组件每次更新的时候，`ref` 都会被设置为 `null` 直到组件实例再次调用它。
+- 如果用 inline callback function，这里每次都会生成一个不同的 function object，所以当组件每次更新的时候，`ref` 都会被设置为 `null` 直到组件实例再次调用它。
+- 其实这里也可以反映出，React 组件定义的时，如果 `props` 中用的是箭头函数，或者 `bind` 方法生成的函数，如`<Button onClick={()=>{handleClick}} />` 或者 `<Button onClick={this.handleClick.bind(this)} />` React Diff 算法在比较的时候，会认为两次的 function object 引用对象是不相等的，所以每次都会重新渲染，这对于性能优化会有影响
 
 
-#### The ref String Attribute (*legacy)
+#### The ref String Attribute *legacy*
 
 要获取一个 React 组件的引用，既可以使用 this 来获取当前 ReactComponent，也可以使用 `ref` 来获取子组件的引用。
 
@@ -507,6 +503,9 @@ var inputRect = input.getBoundingClientRect();
 #### An example
 
 Like adding `autofucus` to the input to pease your users in an easy way.
+
+很简单很实用的 `autofucus` 功能。
+
 
 The React Way
 
@@ -545,33 +544,34 @@ class SignInModal extends Component {
 
 
 
-## #7 Almost-components 
+## #7 Almost-components
 
 > Don’t prematurely componentize. Components aren’t like teaspoons; you *can *have too many.
 >
 > What I am saying: “take something that you *don’t* think should be a component, and make it a bit more like its own component (if it can be).”
 
-让那些你并不觉得它们可以是一个组件的东西，长得更像组件一点（如果它可以的话）。
+让那些你觉得不应该成为一个组件的东西，长得更像组件一点（如果它可以的话）。
 
 
 
 ## #8 Components for formatting text
 
-用来格式化的组件，也就是组件也可以工具化。
+用来做格式化的组件，也就是可以写工具组件。
 
-一般开发时候会把工具函数都放在 `Utils.js` 中，这里提供了一个用组件思想来写工具的思路，还真是 **一切皆组件**。
+其实这就是 HOC 高阶组件。一开始接触高阶组件觉得挺难理解的，后来读了下 `Redux` & `react-redux` 源码，写了一些 redux middlewares，觉得好理解多了。无非也就是函数式编程的应用。
+高阶函数：参数是函数，且返回函数的函数。=> 高阶组件：参数是组件，且返回组件的组件。
 
 ```javascript
 // Here’s a <Price> component that takes a number and returns a pretty string, with or without decimals and a ‘$’ sign.
 
 const Price = (props) => {
-    const price = props.children.toLocaleString('en', {
-      style: props.showSymbol ? 'currency' : undefined,
-      currency: props.showSymbol ? 'USD' : undefined,
-      maximumFractionDigits: props.showDecimals ? 2 : 0,
-    });
+  const price = props.children.toLocaleString('en', {
+    style: props.showSymbol ? 'currency' : undefined,
+    currency: props.showSymbol ? 'USD' : undefined,
+    maximumFractionDigits: props.showDecimals ? 2 : 0,
+  });
 
-    return <span className={props.className}>{price}</span>
+  return <span className={props.className}>{price}</span>
 };
 
 Price.propTypes = {
@@ -602,19 +602,19 @@ const Page = () => {
 };
 ```
 
-这里当然可以很简单的用 `function` 来实现。
+这里当然可以很简单的用更少代码的普通函数来实现
 
 ```javascript
 // could just easily use a function
 function numberToPrice(num, options = {}) {
-    const showSymbol = options.showSymbol !== false;
-    const showDecimals = options.showDecimals !== false;
+  const showSymbol = options.showSymbol !== false;
+  const showDecimals = options.showDecimals !== false;
 
-    return num.toLocaleString('en', {
-      style: showSymbol ? 'currency' : undefined,
-      currency: showSymbol ? 'USD' : undefined,
-      maximumFractionDigits: showDecimals ? 2 : 0,
-    });
+  return num.toLocaleString('en', {
+    style: showSymbol ? 'currency' : undefined,
+    currency: showSymbol ? 'USD' : undefined,
+    maximumFractionDigits: showDecimals ? 2 : 0,
+  });
 }
 
 const Page = () => {
@@ -644,7 +644,7 @@ My suggestion:
 2. Design your store to support those requirements
 3. Do whatever you need to do to your incoming data to make it fit into the store.
 
-推荐使用单个模块来管理所有 Incoming data，所有的数据处理放在一起做，单元测试什么的也变简单了。
+原文作者推荐使用单个模块来管理所有 Incoming data，所有的数据处理放在一起做，单元测试什么的也变简单了。
 
 ```javascript
 // react/redux way
@@ -657,7 +657,7 @@ fetch(`/api/search?${queryParams}`)
 });
 ```
 
-**关于SPA数据流的管理，推荐徐飞在 QCon 上分享的 [单页引用的数据流方案探索](https://zhuanlan.zhihu.com/p/26426054)**
+**这里推荐徐飞在 QCon 上分享的 [单页引用的数据流方案探索](https://zhuanlan.zhihu.com/p/26426054)**
 
 
 
@@ -677,7 +677,9 @@ Into
 import {Button, Icon, Footer} from 'Components';
 ```
 
-这样就省去了相对路径的烦恼，灵活引用组件。
+
+
+更灵活方便使用组件。
 
 使用 `Webpack2` 可以直接配置
 
@@ -697,6 +699,8 @@ req.keys().forEach((key) => {
 
 Creator 中因为用的 `create-react-app` CLI，无法自己配置 Webpack，所以并没有用到...
 
-以上就是一些作者认为很有用的 react 开发迷你模式，虽然我接触 react 很久了，但是项目中开发就是开发，也经常 `C-c/v` 生成组件，却并没有沉下心思考总结一些基本的设计模式，也没有花时间去了解它背后的原理，需要好好反思。
 
-**一切皆组件。Just coding in react-way! **😆
+以上就是一些含金量很高迷你设计模式，最好是开发的时候参照这些要点，能用上就用上，熟能生巧。
+
+
+- END -
