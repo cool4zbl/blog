@@ -1,6 +1,7 @@
 ---
 
 title: Notes of 10 React mini-patterns and Project Creator
+tags: tech, frontend
 
 ---
 
@@ -703,4 +704,4 @@ Creator 中因为用的 `create-react-app` CLI，无法自己配置 Webpack，�
 以上就是一些含金量很高迷你设计模式，最好是开发的时候参照这些要点，能用上就用上，熟能生巧。
 
 
-- END -
+END
