@@ -100,7 +100,7 @@ Preact 据说在组件和元素回收可能有点点问题，不过他们还是�
 
 于是我用这个工具来分析了下 `creator-main-js`。
 
-![creator-js-source-map-explorer](../../Desktop/Code-Screenshots-代码截图/creator-js-source-map-explorer.png)
+![creator-js-source-map-explorer](/content/images/m_uber/creator-js-source-map-explorer.png)
 
 
 
