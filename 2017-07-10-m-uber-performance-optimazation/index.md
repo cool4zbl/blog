@@ -6,7 +6,6 @@ time: 10 July 2017 at 11:55 AM
 
 
 
-
 原文 [Building m.uber: ENGINEERING A HIGH-PERFORMANCE WEB APP FOR THE GLOBAL MARKET](https://eng.uber.com/m-uber/)
 
 **Performance matters on mobile.**
@@ -22,13 +21,15 @@ m.uber 团队对 m.uber，他们的超级轻量 web app 做了一些性能优化
 ### Performance Tools
 
 - Preact over React
-- Webpack  [dynamic bundle splitting](https://webpack.js.org/guides/code-splitting-async/) & [tree-shaking capabilities ](https://webpack.js.org/guides/tree-shaking/)
+- Webpack  [dynamic bundle splitting](https://webpack.js.org/guides/code-splitting-async/) & [tree-shaking capabilities ](https://webpack.js.org/guides/tree-shaking/) 
 - Tiny Libraries & Minimal Dependencies
-- [source-map-explorer](https://www.npmjs.com/package/source-map-explorer)
+- [source-map-explorer](https://www.npmjs.com/package/source-map-explorer) 
+
 
 
 
 下面是正文：
+
 
 
 ### Smaller, faster: how we built it
@@ -187,5 +188,12 @@ Styletron 可以通过创建原子样式(atomic stylesheet)，减少重复的样
 纵观这些方案，可以说把 **[PRPL Patterns](https://developers.google.com/web/fundamentals/performance/prpl-pattern/)** 做到了极致。
 
 
+
 以上。
+
+
+
+
+
+
 

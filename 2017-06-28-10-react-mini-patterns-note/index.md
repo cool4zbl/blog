@@ -1,8 +1,6 @@
 ---
-
 title: 从十个 React 迷你设计模式谈开去
 tags: tech, frontend
-
 ---
 
 
