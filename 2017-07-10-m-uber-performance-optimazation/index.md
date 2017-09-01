@@ -5,8 +5,9 @@ time: 10 July 2017 at 11:55 AM
 ---
 
 
-原文 
-[Building m.uber: ENGINEERING A HIGH-PERFORMANCE WEB APP FOR THE GLOBAL MARKET](https://eng.uber.com/m-uber/)
+
+
+原文 [Building m.uber: ENGINEERING A HIGH-PERFORMANCE WEB APP FOR THE GLOBAL MARKET](https://eng.uber.com/m-uber/)
 
 **Performance matters on mobile.**
 
@@ -21,12 +22,13 @@ m.uber 团队对 m.uber，他们的超级轻量 web app 做了一些性能优化
 ### Performance Tools
 
 - Preact over React
-- Webpack  [dynamic bundle splitting](https://webpack.js.org/guides/code-splitting-async/) & [tree-shaking capabilities ](https://webpack.js.org/guides/tree-shaking/) 
+- Webpack  [dynamic bundle splitting](https://webpack.js.org/guides/code-splitting-async/) & [tree-shaking capabilities ](https://webpack.js.org/guides/tree-shaking/)
 - Tiny Libraries & Minimal Dependencies
-- [source-map-explorer](https://www.npmjs.com/package/source-map-explorer) 
+- [source-map-explorer](https://www.npmjs.com/package/source-map-explorer)
 
 
 
+下面是正文：
 
 
 ### Smaller, faster: how we built it
@@ -47,8 +49,6 @@ m.uber 团队对 m.uber，他们的超级轻量 web app 做了一些性能优化
 
 为了更快首屏渲染，m.uber 在首次浏览器请求时候会返回服务端渲染好的 Preact，且 `state` 及 `markup` 都嵌到行内，全部都是字符串，所以这些内容一旦被客户端下载，就可以立马加载出来。
 
-
-
 #### Serve bundles on demand 按需打包加载
 
 m.uber 中大部分 JS 都是用来做一些辅助功能，这些都是没有必要一次性加载的，所以他们用了 Webpack 的 `Code Splitting` 工具按需加载代码。
@@ -66,7 +66,6 @@ const AsyncSettings = splitPage(
 // 当且仅当 `AsyncSettings` 被 Parent Component render() 调用，
 // setting bundle js 才会被下载.
 ```
-
 
 #### Tiny Libraries 更小的库
 
@@ -87,8 +86,6 @@ m.uber 本意上是希望在 2G 网下也能飞快，所以打包后的体积也
 Preact 除了不支持 `PropTypes` 和合成事件外，还是可以的。
 
 Preact 据说在组件和元素回收可能有点点问题，不过他们还是正在解决的吧... 反正 uber 的人觉得他们用着还不错。
-
-
 
 #### Minimal Dependencies 最小化依赖
 
@@ -112,15 +109,11 @@ Preact 据说在组件和元素回收可能有点点问题，不过他们还是�
 
 相当于是渐进增强的思想吧。
 
-
-
 #### Minimal render Calls
 
 Preact 每次 `render` VDOM 都是有代价的。
 
 尽可能地多用 `shouldComponentUpdate` 最小化 `render` 的调用。
-
-
 
 #### Caching
 
@@ -147,8 +140,6 @@ m.uber 每隔几秒就会从服务器端拉 ride status，再把这些最新的 
 每次的 status data 很小且体积有限，所以存储的更新很快快，可依赖性也好。
 
 他们最后终于意识到，其实并不需要类似 `indexedDB` 这样的本地异步存储 API。
-
-
 
 #### Styling
 
@@ -177,15 +168,11 @@ Styletron 可以通过创建原子样式(atomic stylesheet)，减少重复的样
 
 谨慎使用字体大小和颜色，其实可以完全减少自定义字体，不用向视觉设计妥协了。
 
-
-
 #### Error Handling
 
 - 没有使用很大的错误监控的库，而是拓展了 `window.onerror` ，向服务器端发送客户端错误信息。
 - 给 Preact `render` & `shouldComponentUpdate` 包了一层，检测生命周期方法错误。
 - 因为这样的设计，所以 CDN-hosted file 抛出来的错误并不会给 `window.onerror` 提供什么有效信息，除非正确设置 CORS 头部。但就算是设置了 CORS，异步事件发生的错误还是并不能被跟踪到。于是他们把所有的事件监听都包了一层，允许错误通过 `try/catch` 传到父模块。
-
-​
 
 ### Next Steps
 
@@ -200,12 +187,5 @@ Styletron 可以通过创建原子样式(atomic stylesheet)，减少重复的样
 纵观这些方案，可以说把 **[PRPL Patterns](https://developers.google.com/web/fundamentals/performance/prpl-pattern/)** 做到了极致。
 
 
-
 以上。
-
-
-
-
-
-
 
