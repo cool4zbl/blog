@@ -21,9 +21,9 @@ m.uber 团队对 m.uber，他们的超级轻量 web app 做了一些性能优化
 ### Performance Tools
 
 - Preact over React
-- Webpack  [dynamic bundle splitting](https://webpack.js.org/guides/code-splitting-async/) & [tree-shaking capabilities ](https://webpack.js.org/guides/tree-shaking/) 
+- Webpack  [dynamic bundle splitting](https://webpack.js.org/guides/code-splitting-async/) & [tree-shaking capabilities ](https://webpack.js.org/guides/tree-shaking/)
 - Tiny Libraries & Minimal Dependencies
-- [source-map-explorer](https://www.npmjs.com/package/source-map-explorer) 
+- [source-map-explorer](https://www.npmjs.com/package/source-map-explorer)
 
 
 
@@ -90,15 +90,15 @@ Preact 据说在组件和元素回收可能有点点问题，不过他们还是�
 
 #### Minimal Dependencies 最小化依赖
 
-为了对付依赖膨胀（dependency bloat），Uber 的人对安装的 npm 包特别挑剔。
+为了对付前端打包一个明显的**依赖膨胀（dependency bloat）**，Uber 的人对安装的 npm 包特别挑剔。
 
-他们推荐使用 `Just` 那个包，或者参考它的 npm package 思想：一个函数只做一件事且无其他任何依赖。（去 Just GitHub 看，包作者就是写这篇文章的人...）
+他们推荐使用 `Just` 那个包，或者参考它的 npm package 思想：一个函数只做一件事，且无其他任何依赖。（去 Just GitHub 看，包作者就是写这篇文章的人...）
 
 与服务器端进行数据传输代价高昂，所以一些特别大的库，比如 `Moment` 这种超大的库就是不需要被下载的（但是我在想的是，他们是自己实现了一套类似 Moment 的东西吗？）
 
-推荐了 [source-map-explorer](https://www.npmjs.com/package/source-map-explorer)  工具来分析加载的依赖。
+推荐了 [source-map-explorer](https://www.npmjs.com/package/source-map-explorer)  工具来分析加载的依赖。这样的话能很直观的知道以后从哪块开始进行代码层面的优化。
 
-于是我用这个工具来分析了下 `creator-main-js`。
+于是我用这个工具来分析了下自己的项目 `creator-main-js`。
 
 ![creator-js-source-map-explorer](/content/images/m_uber/creator-js-source-map-explorer.png)
 
@@ -112,9 +112,9 @@ Preact 据说在组件和元素回收可能有点点问题，不过他们还是�
 
 #### Minimal render Calls
 
-Preact 每次 `render` VDOM 都是有代价的。
+和 React 一样，Preact 每次 `render` Virtual DOM 都是有代价的。
 
-尽可能地多用 `shouldComponentUpdate` 最小化 `render` 的调用。
+所以优化方法也和 React 一样，尽可能地多用 `shouldComponentUpdate` 最小化 `render` 的调用。
 
 #### Caching
 
@@ -136,9 +136,9 @@ Webpack 每次都会生成动态打包名，build 环节会把新的打包名直
 
 Uber 的人觉得每次把经常变化的响应数据缓存到 SW 不太好，他们就把这些都扔到了浏览器 `localStorage`.
 
-m.uber 每隔几秒就会从服务器端拉 ride status，再把这些最新的 status data 都放在 `localStorage` 中，当乘客返回 app 时候，就能立马重新渲染页面，而不需要等待 API 链路耗时。
+m.uber 每隔几秒就会从服务器端拉 ride status，再把这些最新的 status data 都放在 `localStorage` 中，当乘客返回 App 时候，就能立马重新渲染页面，而不需要等待 API 链路耗时。
 
-每次的 status data 很小且体积有限，所以存储的更新很快快，可依赖性也好。
+每次的 status data 很小且体积有限，所以存储的更新很快，可依赖性也好。
 
 他们最后终于意识到，其实并不需要类似 `indexedDB` 这样的本地异步存储 API。
 
@@ -146,22 +146,25 @@ m.uber 每隔几秒就会从服务器端拉 ride status，再把这些最新的 
 
 ##### Styletron
 
-样式都是用的 css-in-js，写成了 JS 对象形式，放在每个组件中。
+m.uber 的样式都是用的 css-in-js，写成了 JS 对象形式，放在每个组件中。
 
-使用了 [Styletron](https://github.com/rtsao/styletron) 动态生成样式。可以像 JS 一样，动态打包切割、异步加载样式。
+他们使用了 [Styletron](https://github.com/rtsao/styletron) 动态生成样式，这样的好处是，可以像 JS 一样，更灵活地动态打包切割、异步加载样式。
 
 Styletron 可以通过创建原子样式(atomic stylesheet)，减少重复的样式声明，性能好像也不错， [best-in-class rendering performance](https://github.com/necolas/react-native-web/tree/master/benchmarks). 。
 
-这个倒是可以考虑弄下，`create-react-app` 貌似不支持 `css-in-modules` 这种方式。Rocket 参考 `arc` 的 **Atomic** 思想，使用了 `styled-component`，不过看上面那个对比，性能好像有点低。
+这个倒是可以考虑弄下，`create-react-app` 貌似不支持 `css-in-modules` 这种方式。我自己的脚手架[Rocket](https://github.com/cool4zbl/rocket) 参考 `arc` 的 **Atomic** 思想，使用了 `styled-component`，不过看上面那个对比，性能好像有点低。
 
 ##### SVGs
-> Used [SVGO](https://github.com/svg/svgo) together with manual optimizations to further shorten the paths
+
+> Used [SVGO](https://github.com/svg/svgo) together with manual optimizations to further shorten the paths.
+>
 > Replace polylines with basic shapes.
+>
 > View box dimensions with suitable divisors to avoid expensive decimals in paths.
 
 为了节省空间，对于图标形式的图片尽量用 SVG 格式，然后在 `render` 方法中引入它们。
 
-使用 SVGO、多使用简单图形、view box 使用合适的维度避免昂贵的数学计算开销。
+使用 [SVGO](https://github.com/svg/svgo)、多使用简单图形、view box 使用合适的维度避免昂贵的数学计算开销。
 
 整个 App 体积下降明显！
 
@@ -172,8 +175,8 @@ Styletron 可以通过创建原子样式(atomic stylesheet)，减少重复的样
 #### Error Handling
 
 - 没有使用很大的错误监控的库，而是拓展了 `window.onerror` ，向服务器端发送客户端错误信息。
-- 给 Preact `render` & `shouldComponentUpdate` 包了一层，检测生命周期方法错误。
-- 因为这样的设计，所以 CDN-hosted file 抛出来的错误并不会给 `window.onerror` 提供什么有效信息，除非正确设置 CORS 头部。但就算是设置了 CORS，异步事件发生的错误还是并不能被跟踪到。于是他们把所有的事件监听都包了一层，允许错误通过 `try/catch` 传到父模块。
+- 给 Preact `render` & `shouldComponentUpdate` 方法包了一层，检测生命周期方法错误。
+- 因为这样的设计，所以 CDN-hosted 文件抛出来的错误并不会给 `window.onerror` 提供什么有效信息，除非正确设置 CORS 头部。但就算是设置了 CORS，异步事件发生的错误还是并不能被跟踪到。于是他们把所有的事件监听都包了一层，允许错误通过 `try/catch` 传到父模块。
 
 ### Next Steps
 
@@ -182,10 +185,10 @@ Styletron 可以通过创建原子样式(atomic stylesheet)，减少重复的样
 - 正打算确定一个方案：组件仅仅接受扁平化的基本数据类型和数组类型集合属性，最小化 `render`调用。这样的话就可以用 `React.pureComponent` （这里自动包含了 `SCU`）。`render`方法也可以专注于生成 HTML markup，而不需要处理一大堆逻辑和其他没什么意义的任务。把 API 响应转换为扁平的能被服务端逻辑代理的基本数据结构 (see [normalizr](https://github.com/paularmstrong/normalizr)) ，或者用 `mapStateToProps`。~~神奇的是，Creator 项目的 `WorkStore` 也用了类似 normalizr 的数据结构存储~~（后来为了方便维护还是改用了 Redux...）。
 - 把 `actions` & `reducers` 结合起来，更容易分开打包。
 - 对所有请求使用  [HTTP/2](https://en.wikipedia.org/wiki/HTTP/2)  ，用 push notifications 代替 polling APIs.
-- 另外，Uber 人正在考虑把 m.uber 的架构抽象出一个开源架构，成为未来轻量级 Uber Web App的基础。这让我想起了之前看过的[滴滴 Web App 架构](https://github.com/DDFE/DDFE-blog/issues/4)，同样是打车软件，滴滴 FE team 在 Web App 架构上也是做了大量工夫，值得参考学习。
+- 另外，Uber 人正在考虑把 m.uber 的架构抽象出一个开源架构，成为未来轻量级 Uber Web App的基础。这让我想起了之前看过的 [滴滴 Web App 架构](https://github.com/DDFE/DDFE-blog/issues/4)，同样是打车软件，滴滴 FE team 在 Web App 架构上也是做了大量工夫，值得参考学习。
 
 
-纵观这些方案，可以说把 **[PRPL Patterns](https://developers.google.com/web/fundamentals/performance/prpl-pattern/)** 做到了极致。
+纵观这些方案，可以说把 Google 一直在推的 **[PRPL Patterns](https://developers.google.com/web/fundamentals/performance/prpl-pattern/)** 做到了极致。
 
 
 
