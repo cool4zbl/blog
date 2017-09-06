@@ -1,6 +1,7 @@
 ---
 title: 写在百度电面后
 published_at: 04 Nov 14 @ 16:13
+tags: interview, tech, frontend
 ---
 
 # 写在百度电面后

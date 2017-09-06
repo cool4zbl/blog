@@ -1,6 +1,7 @@
 ---
 title: Ali校招笔试题思考
-published_at: 04 Nov 14 @ 16:13
+published_at: 01 Dec 14 @ 20:13
+tags: interview, tech, frontend
 ---
 
 # Ali校招笔试题思考

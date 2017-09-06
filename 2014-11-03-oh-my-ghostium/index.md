@@ -1,4 +1,6 @@
-
+---
+title: Oh My Ghostium
+tags: tech, frontend, thoughts 
 ---
   
 之前装了Wordpress扔在大洋彼岸一个Arizona搬瓦工的VPS后就再没去理过它，想想也有半年了。  
