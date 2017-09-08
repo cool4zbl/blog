@@ -38,11 +38,11 @@ tags: learning
   很好玩的 Emojineer。 Work @Google Polymer。
 - [Simurai](http://simurai.com)
   什么都懂的 UI designer...
-- [Marყ̈n Haverbeke](marijnhaverbeke.nl)
+- [Marყ̈n Haverbeke](http://marijnhaverbeke.nl)
   著有「Eloquent JavaScript (1st, 2nd)」，好像长得也很帅。
 - [Chris Coyier](https://css-tricks.com/)
   CSS Tricks 的创始人和维护者。介绍很多很棒的你肯定会用到的前端技巧。（其实他的个人网站[在这](http://chriscoyier.net/)）
-- [Kenneth Reitz](kennethreitz.org)
+- [Kenneth Reitz](http://kennethreitz.org)
   Python Request 库维护者。唔，喜欢拿徕卡拍照且减肥成功的人生赢家。
 - [Feross Aboukhadijeh](https://feross.org/)
   WebTorrent 作者之一。JS Standard Style 作者。斯坦福毕业的一小哥，兴趣爱好广泛。
