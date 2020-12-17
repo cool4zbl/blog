@@ -1,0 +1,19 @@
+{
+  "blog": {
+    "url": "http://zhangbinliu.me",
+    "title": "Doodles",
+    "description": "Thoughts, ideas, codes, all by myself",
+    "logo": "favicon.ico",
+    "cover": "/content/images/road_to_sky.jpg"
+  },
+  "authors": {
+    "default": {
+      "name": "cool4zbl",
+      "bio": "👾 Front End => Back End => ∞",
+      "website": "http://zhangbinliu.me/author/ZBL",
+      "image": "/content/images/avatar_zbl.jpg",
+      "cover": "",
+      "slug": ""
+    }
+  }
+}
